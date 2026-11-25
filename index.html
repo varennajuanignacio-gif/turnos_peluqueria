@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estilo Urbano - Reserva de Turnos</title>
+  <style>
+    :root {
+      --primary: #1e293b;
+      --accent: #d97706;
+      --accent-hover: #b45309;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .header {
+      background: var(--primary);
+      color: white;
+      padding: 2rem;
+      border-radius: 16px 16px 0 0;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 1.6rem;
+      margin-bottom: 0.3rem;
+      letter-spacing: 0.5px;
+    }
+
+    .header p {
+      color: #cbd5e1;
+      font-size: 0.9rem;
+    }
+
+    .card {
+      background: var(--card);
+      padding: 2rem;
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      font-size: 0.9rem;
+      color: var(--primary);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .horarios-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-top: 0.4rem;
+    }
+
+    .hora-btn {
+      padding: 0.6rem;
+      border: 1.5px solid #cbd5e1;
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--primary);
+      transition: all 0.2s;
+    }
+
+    .hora-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .hora-btn.selected {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 0.9rem;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.2s;
+    }
+
+    .submit-btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .submit-btn:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    /* Caja de respuesta y simulación de n8n */
+    .resultado {
+      display: none;
+      margin-top: 1.5rem;
+      padding: 1.2rem;
+      background: #ecfdf5;
+      border: 1.5px solid #10b981;
+      border-radius: 10px;
+      color: #065f46;
+    }
+
+    .n8n-box {
+      margin-top: 1.5rem;
+      background: #0f172a;
+      color: #38bdf8;
+      padding: 1rem;
+      border-radius: 10px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      overflow-x: auto;
+    }
+
+    .n8n-title {
+      color: #94a3b8;
+      font-size: 0.75rem;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>✂️ Estudio Urbano</h1>
+      <p>Reservá tu turno online en segundos</p>
+    </div>
+
+    <div class="card">
+      <form id="turnoForm">
+        <div class="form-group">
+          <label for="nombre">Tu Nombre y Apellido</label>
+          <input type="text" id="nombre" placeholder="Ej: Juan Pérez" required>
+        </div>
+
+        <div class="form-group">
+          <label for="telefono">WhatsApp (para confirmarte)</label>
+          <input type="tel" id="telefono" placeholder="Ej: 2262 123456" required>
+        </div>
+
+        <div class="form-group">
+          <label for="servicio">Servicio</label>
+          <select id="servicio" required>
+            <option value="">Elegí un servicio...</option>
+            <option value="Corte de cabello ($12.000)">Corte de cabello ($12.000)</option>
+            <option value="Corte + Barba ($16.000)">Corte + Barba ($16.000)</option>
+            <option value="Coloración / Reflejos ($35.000)">Coloración / Reflejos ($35.000)</option>
+            <option value="Peinado y lavado ($10.000)">Peinado y lavado ($10.000)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="fecha">Fecha del turno</label>
+          <input type="date" id="fecha" required>
+        </div>
+
+        <div class="form-group">
+          <label>Horario disponible</label>
+          <div class="horarios-grid" id="horariosGrid">
+            <button type="button" class="hora-btn" data-hora="09:30">09:30</button>
+            <button type="button" class="hora-btn" data-hora="11:00">11:00</button>
+            <button type="button" class="hora-btn" data-hora="15:00">15:00</button>
+            <button type="button" class="hora-btn" data-hora="16:30">16:30</button>
+            <button type="button" class="hora-btn" data-hora="18:00">18:00</button>
+            <button type="button" class="hora-btn" data-hora="19:30">19:30</button>
+          </div>
+          <input type="hidden" id="horaSeleccionada" required>
+        </div>
+
+        <button type="submit" class="submit-btn" id="btnEnviar">Confirmar Reserva</button>
+      </form>
+
+      <!-- Mensaje de éxito para el cliente -->
+      <div class="resultado" id="cajaResultado">
+        <strong>✅ ¡Turno reservado con éxito!</strong>
+        <p id="textoConfirmacion" style="margin-top: 0.4rem; font-size: 0.9rem;"></p>
+      </div>
+
+      <!-- Vista previa técnica para conectar con n8n -->
+      <div class="n8n-box">
+        <div class="n8n-title">🔌 Datos listos para enviar al Webhook de n8n:</div>
+        <pre id="jsonPreview">{ "estado": "Esperando que completes el formulario..." }</pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Selección visual de botones de horario
+    const botonesHora = document.querySelectorAll('.hora-btn');
+    const inputHora = document.getElementById('horaSeleccionada');
+
+    botonesHora.forEach(btn => {
+      btn.addEventListener('click', () => {
+        botonesHora.forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        inputHora.value = btn.dataset.hora;
+      });
+    });
+
+    // Envío del formulario y simulación de conexión con n8n
+    document.getElementById('turnoForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      if (!inputHora.value) {
+        alert('Por favor, seleccioná un horario disponible.');
+        return;
+      }
+
+      const btn = document.getElementById('btnEnviar');
+      btn.disabled = true;
+      btn.textContent = 'Procesando en n8n...';
+
+      // Armamos el paquete de datos exacto que recibiría tu nodo Webhook
+      const datosParaN8n = {
+        cliente: document.getElementById('nombre').value,
+        telefono: document.getElementById('telefono').value,
+        servicio: document.getElementById('servicio').value,
+        fecha: document.getElementById('fecha').value,
+        hora: inputHora.value,
+        origen: "Web_Peluqueria"
+      };
+
+      // Mostramos el JSON en la caja negra de abajo
+      document.getElementById('jsonPreview').textContent = JSON.stringify(datosParaN8n, null, 2);
+
+      // Simulamos el tiempo de respuesta de n8n (1 segundo)
+      setTimeout(() => {
+        const caja = document.getElementById('cajaResultado');
+        const texto = document.getElementById('textoConfirmacion');
+        
+        texto.innerHTML = `Hola <b>${datosParaN8n.cliente}</b>, te esperamos el <b>${datosParaN8n.fecha}</b> a las <b>${datosParaN8n.hora} hs</b> para tu <b>${datosParaN8n.servicio}</b>. Te enviamos el comprobante por WhatsApp.`;
+        caja.style.display = 'block';
+
+        btn.disabled = false;
+        btn.textContent = 'Confirmar Reserva';
+      }, 800);
+    });
+  </script>
+
+</body>
+</html>
